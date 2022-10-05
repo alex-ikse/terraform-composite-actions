@@ -32,11 +32,10 @@ runs:
       shell: bash
       run: |
         DIR="$HOME/$(date +%s)-${RANDOM}"
-        tf_archive=
         mkdir -p "${DIR}/bin"
-        curl -sSo $DIR/$tf_archive https://releases.hashicorp.com/terraform/${{ inputs.terraform-version }}/terraform_${{ inputs.terraform-version }}_linux_amd64.zip
-        unzip -qq "$DIR/terraform_${{ inputs.terraform-version }}_linux_amd64.zip" terraform -d $DIR/bin
-        rm $DIR/terraform_${{ inputs.terraform-version }}_linux_amd64.zip 2> /dev/null
+        curl -sSo $DIR/terraform.zip https://releases.hashicorp.com/terraform/${{ inputs.terraform-version }}/terraform_${{ inputs.terraform-version }}_linux_amd64.zip
+        unzip -qq "$DIR/terraform.zip" terraform -d $DIR/bin
+        rm $DIR/terraform.zip 2> /dev/null
         echo "$DIR/bin" >> $GITHUB_PATH
         echo "DIR=$DIR" >> $GITHUB_ENV
 
@@ -44,7 +43,6 @@ runs:
       shell: bash
       run: |
         pip install -q pre-commit
-
         curl -sSLo $DIR/terraform-docs.tar.gz https://github.com/terraform-docs/terraform-docs/releases/download/${{ inputs.terraform-docs-version }}/terraform-docs-${{ inputs.terraform-docs-version }}-$(uname)-amd64.tar.gz
         tar -xzf $DIR/terraform-docs.tar.gz -C $DIR/bin terraform-docs
         rm $DIR/terraform-docs.tar.gz 2> /dev/null
