@@ -31,36 +31,36 @@ runs:
     - name: Install Terraform v${{ inputs.terraform-version }}
       shell: bash
       run: |
-        tfca_path="$HOME/tf-${{ inputs.terraform-version }}/bin"
+        DIR="$HOME/$(date %+s)-${RANDOM}"
         tf_archive=terraform_${{ inputs.terraform-version }}_linux_amd64.zip
-        mkdir -p "${tfca_path}"
-        export PATH="${tfca_path}:$PATH"
-        curl -sSO https://releases.hashicorp.com/terraform/${{ inputs.terraform-version }}/${tf_archive}
-        unzip -qq "${tf_archive}" terraform -d $tfca_path
-        rm ${tf_archive} 2> /dev/null
-        echo "PATH=$PATH" >> $GITHUB_ENV
+        mkdir -p "${DIR}/bin"
+        curl -sSo $DIR/$tf_archive https://releases.hashicorp.com/terraform/${{ inputs.terraform-version }}/${tf_archive}
+        unzip -qq "$DIR/${tf_archive}" terraform -d $DIR/bin
+        rm $DIR/${tf_archive} 2> /dev/null
+        echo "$DIR/bin" >> $GITHUB_PATH
+        echo "DIR=$DIR" >> $GITHUB_ENV
 
     - name: Install pre-commit dependencies
       shell: bash
       run: |
         pip install -q pre-commit
 
-        curl -sSLo ./terraform-docs.tar.gz https://github.com/terraform-docs/terraform-docs/releases/download/${{ inputs.terraform-docs-version }}/terraform-docs-${{ inputs.terraform-docs-version }}-$(uname)-amd64.tar.gz
-        sudo tar -xzf terraform-docs.tar.gz -C /usr/bin/ terraform-docs
-        rm terraform-docs.tar.gz 2> /dev/null
+        curl -sSLo $DIR/terraform-docs.tar.gz https://github.com/terraform-docs/terraform-docs/releases/download/${{ inputs.terraform-docs-version }}/terraform-docs-${{ inputs.terraform-docs-version }}-$(uname)-amd64.tar.gz
+        tar -xzf $DIR/terraform-docs.tar.gz -C $DIR terraform-docs
+        rm $DIR/terraform-docs.tar.gz 2> /dev/null
 
         if [[ "${{ inputs.tflint-version }}" == "latest" ]]; then
-          curl -sSL "$(curl -s https://api.github.com/repos/terraform-linters/tflint/releases/latest | grep -o -E "https://.+?_linux_amd64.zip")" > tflint.zip
+          curl -sSL "$(curl -s https://api.github.com/repos/terraform-linters/tflint/releases/latest | grep -o -E "https://.+?_linux_amd64.zip")" > $DIR/tflint.zip
         else
-          curl -sSLo ./tflint.zip https://github.com/terraform-linters/tflint/releases/download/${{ inputs.tflint-version }}/tflint_linux_amd64.zip
+          curl -sSLo $DIR/tflint.zip https://github.com/terraform-linters/tflint/releases/download/${{ inputs.tflint-version }}/tflint_linux_amd64.zip
         fi
-        sudo unzip -qq tflint.zip tflint -d /usr/bin/
-        rm tflint.zip 2> /dev/null
+        unzip -qq $DIR/tflint.zip tflint -d $DIR/bin
+        rm $DIR/tflint.zip 2> /dev/null
 
         if [[ "${{ inputs.install-hcledit }}" == "true" ]]; then
-          curl -sSLo ./hcledit.tar.gz https://github.com/minamijoyo/hcledit/releases/download/v${{ inputs.hcledit-version }}/hcledit_${{ inputs.hcledit-version }}_$(uname)_amd64.tar.gz
-          sudo tar -xzf hcledit.tar.gz -C /usr/bin/ hcledit
-          rm hcledit.tar.gz 2> /dev/null
+          curl -sSLo $DIR/hcledit.tar.gz https://github.com/minamijoyo/hcledit/releases/download/v${{ inputs.hcledit-version }}/hcledit_${{ inputs.hcledit-version }}_$(uname)_amd64.tar.gz
+          tar -xzf hcledit.tar.gz -C $DIR hcledit
+          rm $DIR/hcledit.tar.gz 2> /dev/null
         fi
 
     - name: Execute pre-commit
