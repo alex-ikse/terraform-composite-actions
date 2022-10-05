@@ -31,7 +31,7 @@ runs:
     - name: Install Terraform v${{ inputs.terraform-version }}
       shell: bash
       run: |
-        DIR="$HOME/$(date %+s)-${RANDOM}"
+        DIR="$HOME/$(date +%s)-${RANDOM}"
         tf_archive=terraform_${{ inputs.terraform-version }}_linux_amd64.zip
         mkdir -p "${DIR}/bin"
         curl -sSo $DIR/$tf_archive https://releases.hashicorp.com/terraform/${{ inputs.terraform-version }}/${tf_archive}
