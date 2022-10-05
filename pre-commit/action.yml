@@ -32,11 +32,11 @@ runs:
       shell: bash
       run: |
         DIR="$HOME/$(date +%s)-${RANDOM}"
-        tf_archive=terraform_${{ inputs.terraform-version }}_linux_amd64.zip
+        tf_archive=
         mkdir -p "${DIR}/bin"
-        curl -sSo $DIR/$tf_archive https://releases.hashicorp.com/terraform/${{ inputs.terraform-version }}/${tf_archive}
-        unzip -qq "$DIR/${tf_archive}" terraform -d $DIR/bin
-        rm $DIR/${tf_archive} 2> /dev/null
+        curl -sSo $DIR/$tf_archive https://releases.hashicorp.com/terraform/${{ inputs.terraform-version }}/terraform_${{ inputs.terraform-version }}_linux_amd64.zip
+        unzip -qq "$DIR/terraform_${{ inputs.terraform-version }}_linux_amd64.zip" terraform -d $DIR/bin
+        rm $DIR/terraform_${{ inputs.terraform-version }}_linux_amd64.zip 2> /dev/null
         echo "$DIR/bin" >> $GITHUB_PATH
         echo "DIR=$DIR" >> $GITHUB_ENV
 
