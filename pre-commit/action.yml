@@ -46,7 +46,7 @@ runs:
         pip install -q pre-commit
 
         curl -sSLo $DIR/terraform-docs.tar.gz https://github.com/terraform-docs/terraform-docs/releases/download/${{ inputs.terraform-docs-version }}/terraform-docs-${{ inputs.terraform-docs-version }}-$(uname)-amd64.tar.gz
-        tar -xzf $DIR/terraform-docs.tar.gz -C $DIR terraform-docs
+        tar -xzf $DIR/terraform-docs.tar.gz -C $DIR/bin terraform-docs
         rm $DIR/terraform-docs.tar.gz 2> /dev/null
 
         if [[ "${{ inputs.tflint-version }}" == "latest" ]]; then
@@ -59,7 +59,7 @@ runs:
 
         if [[ "${{ inputs.install-hcledit }}" == "true" ]]; then
           curl -sSLo $DIR/hcledit.tar.gz https://github.com/minamijoyo/hcledit/releases/download/v${{ inputs.hcledit-version }}/hcledit_${{ inputs.hcledit-version }}_$(uname)_amd64.tar.gz
-          tar -xzf hcledit.tar.gz -C $DIR hcledit
+          tar -xzf hcledit.tar.gz -C $DIR/bin hcledit
           rm $DIR/hcledit.tar.gz 2> /dev/null
         fi
 
