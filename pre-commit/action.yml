@@ -31,7 +31,8 @@ runs:
     - name: Install Terraform v${{ inputs.terraform-version }}
       shell: bash
       run: |
-        tfca_path="$HOME/$(uuidgen)/bin"
+        random_string=$RANDOM-$(date +%s)
+        tfca_path="$HOME/$random_string/bin"
         mkdir -p "$tfca_path"
         PATH="$tfca_path:$PATH"
         curl -sSO https://releases.hashicorp.com/terraform/${{ inputs.terraform-version }}/terraform_${{ inputs.terraform-version }}_linux_amd64.zip -o terraform-$GITHUB_RUN_ID.zip
