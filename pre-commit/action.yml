@@ -31,13 +31,14 @@ runs:
     - name: Install Terraform v${{ inputs.terraform-version }}
       shell: bash
       run: |
-        random_string="$RANDOM-$(date +%s)"
-        tfca_path="$HOME/${random_string}/bin"
+        tfca_path="$HOME/tf-${{ inputs.terraform-version }}/bin"
+        tf_archive=terraform_${{ inputs.terraform-version }}_linux_amd64.zip
         mkdir -p "${tfca_path}"
-        PATH="${tfca_path}:$PATH"
-        curl -sS https://releases.hashicorp.com/terraform/${{ inputs.terraform-version }}/terraform_${{ inputs.terraform-version }}_linux_amd64.zip -o terraform-$GITHUB_RUN_ID.zip
-        unzip -qq terraform-$GITHUB_RUN_ID.zip terraform -d $tfca_path
-        rm terraform-$GITHUB_RUN_ID.zip 2> /dev/null
+        export PATH="${tfca_path}:$PATH"
+        curl -sSO https://releases.hashicorp.com/terraform/${{ inputs.terraform-version }}/${tf_archive}
+        unzip -qq "${tf_archive}" terraform -d $tfca_path
+        rm ${tf_archive} 2> /dev/null
+        echo "PATH=$PATH" >> $GITHUB_ENV
 
     - name: Install pre-commit dependencies
       shell: bash
