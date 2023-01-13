@@ -15,15 +15,19 @@ inputs:
   args:
     description: Arguments to pass to pre-commit
     required: false
-    default: '--all-files --color always --show-diff-on-failure'
+    default: "--all-files --color always --show-diff-on-failure"
   install-hcledit:
     description: Install hcledit for pre-commit
     required: false
-    default: 'false'
+    default: "false"
   hcledit-version:
     description: Version of hcledit to install when `install-hcledit` is true
     required: false
     default: 0.2.3
+  install-checkov:
+    description: Install checkov for pre-commit
+    required: false
+    default: "true"
 
 runs:
   using: composite
@@ -59,6 +63,10 @@ runs:
           curl -sSLo $DIR/hcledit.tar.gz https://github.com/minamijoyo/hcledit/releases/download/v${{ inputs.hcledit-version }}/hcledit_${{ inputs.hcledit-version }}_$(uname)_amd64.tar.gz
           tar -xzf hcledit.tar.gz -C $DIR/bin hcledit
           rm $DIR/hcledit.tar.gz 2> /dev/null
+        fi
+
+        if [[ "${{ inputs.install-checkov }}" == "true" ]]; then
+          pip install checkov
         fi
 
     - name: Execute pre-commit
